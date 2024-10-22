@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+input {
+    background-color: transparent; 
+    border: none; 
+    outline: none; 
+  }

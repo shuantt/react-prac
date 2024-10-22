@@ -1,201 +1,189 @@
-import { useState } from "react";
-import { useEffect } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
-// import "./assets/css/index.css";
+import { useRef, useState } from "react";
+// import "./App.css";
+import "./assets/css/index.css";
+import TextBox from "./componenets/TextBox";
+import DropdownList from "./componenets/DropdownList";
+import CheckboxGroup from "./componenets/CheckboxGroup";
+import RadioButton from "./componenets/RadioButton";
 
-// json 物件範例
-// {
-//   "id": 1,
-//   "name": "Leanne Graham",
-//   "username": "Bret",
-//   "email": "Sincere@april.biz",
-//   "address": {
-//   "street": "Kulas Light",
-//   "suite": "Apt. 556",
-//   "city": "Gwenborough",
-//   "zipcode": "92998-3874",
-//   "geo": {
-//   "lat": "-37.3159",
-//   "lng": "81.1496"
-//    }
-//   },
-//   "phone": "1-770-736-8031 x56442",
-//   "website": "hildegard.org",
-//   "company": {
-//   "name": "Romaguera-Crona",
-//   "catchPhrase": "Multi-layered client-server neural-net",
-//   "bs": "harness real-time e-markets"
-//    }
-// }
+// 遇到問題：
+// 1. id 重複問題 (我故意用同樣的選項，發現radio點擊卻勾選了checkbox)，目前我是直接自訂 id 但這樣不好管理還要想一堆id名稱，實務上是否直接直接產生唯一值當id就好? (像是 timesatmp 或 uuid)
+// 2. 試著用 forwardRef 從父元件執行子元件的驗證，但目前子元件 validate 寫得很亂... 有點寫到眼花...
+// 3. 父層二次驗證出現問題，回傳 isError 沒更新，可以看 Textbox.jsx 72 行 (應該是有異步問題，但我不確定也不知道怎麼解決)
+//    問題重現方式：(可看console)
+//      a.這邊我如果不填寫和選擇任何內容，送出表單的時候會顯示紅字和錯誤訊息(元件內的驗證)，但 isError 不會吃到 true, 所以返回父層就會成功送出表單 
+//      b.如果是子元件先執行過 onchange 事件(例如刪掉第一個輸入框的 Hello)，這時候就能吃到 isError = true，父層送出表單會阻擋
 
 function App() {
-  const [userData, setUserData] = useState([]);
-  const [curPageNo, setCurPage] = useState(1);
+  const [formData, setFormData] = useState({
+    note: "",
+    phone: "",
+    email: "",
+    location: "",
+    fruits: [],
+    animal: "",
+  });
 
-  const headers = [
-    { text: "ID", key: "id" },
-    { text: "Name", key: "name" },
-    { text: "Username", key: "username" },
-    { text: "Email", key: "email" },
-    { text: "Address", key: "address" },
-    { text: "Geo", key: "geo" },
-    { text: "Phone", key: "phone" },
-    { text: "Website", key: "website" },
-    { text: "Company", key: "company" },
-    { text: "Phrase", key: "phrase" },
-    { text: "Bussiness", key: "bussiness" }
+  const noteRef = useRef(null);
+  const phoneRef = useRef(null);
+  const emailRef = useRef(null);
+  const locationRef = useRef(null);
+  const fruitsRef = useRef([]);
+  const animalRef = useRef(null);
+
+  let selectOptions = [
+    { value: "taipei", label: "台北" },
+    { value: "taoyuan", label: "桃園" },
+    { value: "tainan", label: "台南" },
   ];
 
-  const pageSize = 5;
-  const totalRows = userData.length;
+  let checkboxOptions = [
+    { id: "cb-apple", name: "fruits", value: "apple", label: "蘋果" },
+    { id: "cb-banana", name: "fruits", value: "banana", label: "香蕉" },
+    { id: "cb-kiwi", name: "fruits", value: "kiwi", label: "奇異果" },
+  ];
 
-  useEffect(() => {
-    const apiUrl = `https://jsonplaceholder.typicode.com/users`;
-    fetch(apiUrl)
-      .then((res) => res.json())
-      .then((data) => {
-        // 為了正確對應 header，先把資料變成單層物件方便用屬性名稱取值
-        let userData = data.map((item) => {
-          return {
-            id: item.id,
-            name: item.name,
-            username: item.username,
-            email: item.email,
-            address: `${item.address.street}, ${item.address.suite}, ${item.address.city}, ${item.address.zipcode}`,
-            geo: `${item.address.geo.lat}, ${item.address.geo.lng}`,
-            phone: item.phone,
-            website: item.website,
-            company: item.company.name,
-            phrase: item.company.catchPhrase,
-            bussiness: item.company.bs,
-          };
-        });
+  let radioOptions = [
+    { id: "rb-cat", name: "animal", value: "cat", label: "貓" },
+    { id: "rb-dog", name: "animal", value: "dog", label: "狗" },
+  ];
 
-        setUserData(userData);
-      })
-      .catch((err) => {
-        console.log(err);
+  const handleSubmit = () => {
+    if (!validateForm()) {
+      console.log("表單驗證失敗，請檢查表單");
+      return;
+    } else {
+      setFormData({
+        note: noteRef.current.getValue(),
+        phone: phoneRef.current.getValue(),
+        email: emailRef.current.getValue(),
+        location: locationRef.current.getValue(),
+        fruits: fruitsRef.current.getValue(),
+        animal: animalRef.current.getValue(),
       });
-  }, []);
-
-  // Table 元件設計想法：
-  // 會需要從外部接收的有，curPage (當前頁碼)、pageSize(顯示數量)、headers(表頭文字)、data(資料)
-  // 表頭跟資料要做對應，可以用屬性名取值，所以 headers 改成物件 text 是顯示文字，key 用來對應 data 的物件屬性
-  // 不過如果是多層巢狀的就不知道怎麼設計，目前想到的就是把 data 處理成單層物件，對應 headers 裡 key 
-  const TableComponent = (props) => {
-    const { curPageNo, pageSize, headers, data } = props;
-    const startIndex = (curPageNo - 1) * pageSize;
-    const endIndex = curPageNo * pageSize;
-    const curPageData = data.slice(startIndex, endIndex);
-
-    const THeadComponent = () => {
-      return (
-        <thead>
-          <tr>
-            {headers.map((item) => (
-              <th style={{ fontWeight: 700, padding: "0.5rem" }} key={item.key}>
-                {item.text}
-              </th>
-            ))}
-          </tr>
-        </thead>
-      );
-    };
-
-    const TBodyComponent = (props) => {
-      let data = props.data;
-
-      const TDComponent = (props) => {
-        const { content } = props;
-
-        return (
-          <td style={{ padding: "0.5rem", fontSize: "0.8rem" }}>{content}</td>
-        );
-      };
-
-      return (
-        <tbody>
-          {data.map((item, index) => (
-            <tr key={index}>
-                {headers.map((header) => (
-                  <TDComponent key={header.key} content={item[header.key]} />
-                ))}
-            </tr>
-          ))}
-        </tbody>
-      );
-    };
-
-    return (
-      <>
-        <table style={{ display: "block", overflowX: "scroll" }}>
-          <THeadComponent headers={headers} />
-          <TBodyComponent data={curPageData} />
-        </table>
-      </>
-    );
+      console.log("通過驗證，送出表單: " + JSON.stringify(formData));
+    }
   };
 
-  // Pagination 元件設計想法：
-  // 分頁用 curPage(當前頁碼)、pageSize(顯示數量)、totalRows(總筆數) 做計算和渲染，所以這些從外部傳進來
-  // 點擊頁碼要改變當前頁面這個不知道怎麼改，現在都在同一個 jsx 檔，可以直接用全域 curPage 的 setCurPage 處理
-  // 但拆成元件的話(如果是不同jsx檔的話)不知道狀態管理怎麼做
-  const PaginationComponent = (props) => {
-    const { curPageNo, pageSize, totalRows } = props;
-    const totalPages = Math.ceil(totalRows / pageSize);
+  const handleClear = () => {
+    noteRef.current.clearValue();
+    phoneRef.current.clearValue();
+    emailRef.current.clearValue();
+    locationRef.current.clearValue();
+    fruitsRef.current.clearValue();
+    animalRef.current.clearValue();
+    console.log("清除表單: " + JSON.stringify(formData));
+  };
 
-    const clickPageNo = (curPageNo) => {
-      setCurPage(curPageNo);
-    };
+  const validateForm = () => {
+    if (noteRef.current.validateValue().isError) {
+      return false;
+    } else if (phoneRef.current.validateValue().isError) {
+      return false;
+    } else if (emailRef.current.validateValue().isError) {
+      return false;
+    } else if (fruitsRef.current.validateValue().isError) {
+      return false;
+    } else {
+      return true;
+    }
 
-    return (
-      <div style={{ margin: "8px" }}>
-        {Array.from({ length: totalPages }, (num, i) => {
-          const isCurPage = curPageNo === i + 1;
-
-          return (
-            <button
-              key={i}
-              style={{
-                padding: "4px 8px",
-                border: "1px solid black",
-                borderRadius: "8px",
-                margin: "4px",
-                fontSize: "14px",
-                color: isCurPage ? "white" : "black",
-                backgroundColor: isCurPage ? "black" : "white",
-              }}
-              onClick={() => {
-                clickPageNo(i + 1);
-              }}
-            >
-              {i + 1}
-            </button>
-          );
-        })}
-      </div>
-    );
+    // ...額外父元件驗證
   };
 
   return (
-    <>
-      <h2 style={{ padding: "1rem", fontSize: "1.5rem", fontWeight: "bold" }}>
-        使用者資料
-      </h2>
-      <TableComponent
-        headers={headers}
-        curPageNo={curPageNo}
-        pageSize={pageSize}
-        data={userData}
-      />
-      <PaginationComponent
-        curPageNo={curPageNo}
-        pageSize={pageSize}
-        totalRows={totalRows}
-      />
-    </>
+    <div className="p-8">
+      {/* Input Text Field */}
+      <div className="mb-4 flex flex-col items-start space-y-6">
+        <h2 className="text-lg font-bold">Input Text Field</h2>
+        <TextBox
+          id="tb-note"
+          label={"備註"}
+          type={"text"}
+          defaultValue={"Hello"}
+          placeholder={"輸入文字"}
+          isRequired={true}
+          isDisabled={false}
+          variant="standard"
+          size="md"
+          ref={noteRef}
+        />
+        <TextBox
+          id="tb-phone"
+          label={"Phone"}
+          type={"text"}
+          validate={{ pattern: "^[0-9]*$", msg: "只可輸入數字 0 - 9" }}
+          defaultValue={""}
+          placeholder={"請輸入 0-9 數字"}
+          isRequired={true}
+          isDisabled={false}
+          variant="fill"
+          size="sm"
+          ref={phoneRef}
+        />
+        <TextBox
+          id="tb-email"
+          label={"Email"}
+          type={"email"}
+          defaultValue={""}
+          placeholder={"請輸入 Email"}
+          validate={{
+            pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+            msg: "Email 格式錯誤",
+          }}
+          isRequired={true}
+          isDisabled={false}
+          variant="outline"
+          size="md"
+          ref={emailRef}
+        />
+      </div>
+      <div className="my-8 border-b-[1px] border-solid border-gray-300"></div>
+
+      {/* Dropdown */}
+      <div className="mb-4 flex flex-col items-start space-y-4">
+        <h2 className="text-lg font-bold">Dropdown</h2>
+        <DropdownList
+          id="ddl-fruits"
+          label={"選擇地區"}
+          options={selectOptions}
+          size="base"
+          ref={locationRef}
+        />
+      </div>
+      <div className="my-8 border-b-[1px] border-solid border-gray-300"></div>
+
+      {/* Checkbox */}
+      <div className="mb-4 flex flex-col items-start space-y-4">
+        <h2 className="text-lg font-bold">Checkbox</h2>
+        <CheckboxGroup checkboxOptions={checkboxOptions} ref={fruitsRef} />
+      </div>
+      <div className="my-8 border-b-[1px] border-solid border-gray-300"></div>
+
+      {/* RadioButton */}
+      <div className="mb-4 flex flex-col items-start space-y-4">
+        <h2 className="text-lg font-bold">RadioButton</h2>
+        <RadioButton radioOptions={radioOptions} ref={animalRef} />
+      </div>
+      <div className="my-8 border-b-[1px] border-solid border-gray-300"></div>
+
+      {/* 送出按鈕 */}
+      <div className="space-x-4">
+        <button
+          className="rounded bg-primary px-4 py-2 text-white hover:bg-gray-500"
+          onClick={handleSubmit}
+        >
+          送出表單
+        </button>
+        <button
+          className="rounded bg-primary px-4 py-2 text-white hover:bg-gray-500"
+          onClick={handleClear}
+        >
+          清除表單
+        </button>
+        <div className="my-8 border-b-[1px] border-solid border-gray-300"></div>
+      </div>
+    </div>
   );
 }
 

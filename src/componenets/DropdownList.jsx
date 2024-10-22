@@ -1,38 +1,63 @@
-import { useState } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
 import arrowDown from "../assets/arrow_down.svg";
 
-const Dropdown = (props, ref) => {
-  const [isDroped, setIsDropded] = useState(false);
-
+const DropdownList = forwardRef((props, ref) => {
   const {
     label,
     options = [],
-    defaultValue,
-    width = "w-64",
-    padding = "p-2",
   } = props;
 
-  const isLabelShow = label ? true : false;
+  const [isDroped, setIsDropded] = useState(false);
+  const defaultValue = options[0].label;
   const [selectedValue, setSelectedValue] = useState(defaultValue);
 
   let hidden = isDroped ? "block" : "hidden";
   const selectItem = (option) => {
-    console.log(option.label);
     setSelectedValue(option.label);
     setIsDropded(false);
+  };
+  
+  useImperativeHandle(ref, () => ({
+    getValue: () => {
+      return selectedValue;
+    },
+    clearValue: () => {
+      setSelectedValue(defaultValue);
+    },
+  }));
+
+  const textboxStyle = {
+    standard: {
+      container: "border-b-[1px] border-gray-600",
+      label: "text-[12px] text-start",
+      input: "",
+      error: "border-b-danger",
+    },
+    outline: {
+      container: "rounded-md border-[1px] p-2",
+      label: "text-[12px] absolute -top-2 bg-white ",
+      input: "",
+      error: "border-danger",
+    },
+    fill: {
+      container: "rounded-md bg-gray-200 p-2 pt-5",
+      label: "text-[12px] bg-none top-1 absolute",
+      input: "border-b-2 border-gray-600",
+      error: "border-[1px] border-solid border-danger",
+    },
   };
 
   return (
     <>
-      <div className={`relative ${width}`}>
+      <div className={`relative`}>
         <div
-          className={`relative rounded-md border-[1px] border-gray-600 ${padding} cursor-pointer`}
+          className={`relative rounded-md border-[1px] border-gray-600 p-2 cursor-pointer`}
           onClick={() => {
             setIsDropded(!isDroped);
           }}
         >
           <div
-            className={`absolute -top-3 bg-white px-1 text-[12px] text-gray-600 ${isLabelShow ? "block" : "hidden"}`}
+            className={`absolute -top-3 bg-white px-1 text-[12px] text-gray-600 ${label ? "block" : "hidden"}`}
           >
             {label}
           </div>
@@ -58,7 +83,7 @@ const Dropdown = (props, ref) => {
       </div>
     </>
   );
-};
+});
 
 const DropdownItem = (props) => {
   let { value, label, selectItem } = props;
@@ -73,4 +98,4 @@ const DropdownItem = (props) => {
   );
 };
 
-export default Dropdown;
+export default DropdownList;

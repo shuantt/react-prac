@@ -59,14 +59,9 @@ function App() {
         // 為了正確對應 header，先把資料變成單層物件方便用屬性名稱取值
         let userData = data.map((item) => {
           return {
-            id: item.id,
-            name: item.name,
-            username: item.username,
-            email: item.email,
+            ...item,
             address: `${item.address.street}, ${item.address.suite}, ${item.address.city}, ${item.address.zipcode}`,
             geo: `${item.address.geo.lat}, ${item.address.geo.lng}`,
-            phone: item.phone,
-            website: item.website,
             company: item.company.name,
             phrase: item.company.catchPhrase,
             bussiness: item.company.bs,

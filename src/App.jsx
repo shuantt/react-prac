@@ -72,6 +72,14 @@ function App() {
     locationRef.current.clearValue();
     fruitsRef.current.clearValue();
     animalRef.current.clearValue();
+    setFormData({
+      note: "",
+      phone: "",
+      email: "",
+      location: "",
+      fruits: [],
+      animal: "",
+    })
     console.log("清除表單: " + JSON.stringify(formData));
   };
 

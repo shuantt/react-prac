@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { useEffect } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+import "../App.css";
 // import "./assets/css/index.css";
 
 // json 物件範例
@@ -30,7 +28,7 @@ import "./App.css";
 //    }
 // }
 
-function App() {
+function Homework1() {
   const [userData, setUserData] = useState([]);
   const [curPageNo, setCurPage] = useState(1);
 
@@ -194,4 +192,4 @@ function App() {
   );
 }
 
-export default App;
+export default Homework1;

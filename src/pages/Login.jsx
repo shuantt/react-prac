@@ -4,7 +4,6 @@ import TextBox from "../componenets/TextBox";
 import "../assets/css/index.css";
 
 const Login = () => {
-  console.log("進入 LoginComponent");
   const refs = useRef({
     usernameRef: null,
     passwordRef: null,
@@ -33,7 +32,8 @@ const Login = () => {
       .then((data) => {
         if (data.data) {
           localStorage.setItem("token", data.data);
-          navigateToPage("/");
+          // navigateToPage("/"); //這個寫法會無法使用
+          navigate("/");
         } else {
           setIsError(true);
           setErrMsg("帳號或密碼錯誤");

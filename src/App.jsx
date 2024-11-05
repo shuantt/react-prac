@@ -11,6 +11,7 @@ import "./assets/css/index.css";
 // 3. 渲染問題： 在 1. 的狀況，當 DefaultComponent state 更新時，組件有重新選染，並且會回到 App.jsx；
 //              但 2. 跳轉到 Login 後，即使 DefaultComponent 取得資料，也不會重新渲染 Profile.jsx；兩者差別在路由有變動且 Login 頁面沒有包 DefaultComponent
 //              但看不懂這個重新渲染的機制是什麼？為什麼 2. 的 DefaultComponent 更新不會再重新渲染一次子元件 Profile.jsx？ 還是其實有渲染，但因為路由在 /login  所以看不到？
+// 4. useNavigate 用法：為什麼在 Login.jsx 中用 37 行會成功 36 行會失敗？
 
 function App(props) {
   const { username } = props;

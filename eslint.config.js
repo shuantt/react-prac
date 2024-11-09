@@ -1,4 +1,5 @@
 import js from '@eslint/js'
+
 import globals from 'globals'
 import react from 'eslint-plugin-react'
 import reactHooks from 'eslint-plugin-react-hooks'
@@ -34,6 +35,8 @@ export default [
         'warn',
         { allowConstantExport: true },
       ],
+      "react-hooks/rules-of-hooks": "error", // 檢查 Hook 的規則
+      "react-hooks/exhaustive-deps": "warn" // 檢查 effect 的相依性
     },
   },
 ]

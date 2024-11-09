@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App.jsx"; 
+import Homework from "./pages/Homework.jsx";
 import Homework1 from "./pages/Homework1.jsx"; 
 import Homework2 from "./pages/Homework2.jsx"; 
 import Login from "./pages/Login.jsx";
@@ -15,11 +16,15 @@ const router = createBrowserRouter([
     element: <DefaultComponent Component={App} />,
   },
   {
-    path: "/homework1",
+    path: "/homework",
+    element: <Homework />,
+  },
+  {
+    path: "/homework/1",
     element: <Homework1 />,
   },
   {
-    path: "/homework2",
+    path: "/homework/2",
     element: <Homework2 />,
   },
   {
@@ -32,7 +37,7 @@ const router = createBrowserRouter([
   },
   {
     path: "*",
-    element: <ErrorPage/>,
+    element: <ErrorPage />,
   },
 ]);
 

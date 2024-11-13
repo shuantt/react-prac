@@ -17,7 +17,7 @@ function App(props) {
 
   return (
     <>
-      <Navbar.Container className="border-b-[1px] border-solid border-gray-500">
+      {/* <Navbar.Container className="border-b-[1px] border-solid border-gray-500">
         <Navbar.Logo title="ReactPrac" />
         <Navbar.ItemGroup>
           <Navbar.Item text="首頁" href="/" />
@@ -25,7 +25,7 @@ function App(props) {
           <Navbar.Item text="元件" href="/" />
           {username ?? (<Navbar.Item text="登入" href="/login" />)}
         </Navbar.ItemGroup>
-      </Navbar.Container>
+      </Navbar.Container> */}
 
       {/* {!username ? (
         <button

@@ -101,7 +101,7 @@ const Layout = ({ children }) => {
       </Navbar.ItemGroup>
 
       <main className="p-8 md:px-14">
-        <div className="mx-auto flex max-w-md md:max-w-xl lg:max-w-7xl">
+        <div className="mx-auto max-w-md md:max-w-xl lg:max-w-7xl">
           <Outlet />
         </div>
       </main>

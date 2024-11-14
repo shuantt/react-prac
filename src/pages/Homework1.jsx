@@ -43,7 +43,7 @@ function Homework1() {
     { text: "Website", key: "website" },
     { text: "Company", key: "company" },
     { text: "Phrase", key: "phrase" },
-    { text: "Bussiness", key: "bussiness" }
+    { text: "Bussiness", key: "bussiness" },
   ];
 
   const pageSize = 5;
@@ -76,7 +76,7 @@ function Homework1() {
   // Table 元件設計想法：
   // 會需要從外部接收的有，curPage (當前頁碼)、pageSize(顯示數量)、headers(表頭文字)、data(資料)
   // 表頭跟資料要做對應，可以用屬性名取值，所以 headers 改成物件 text 是顯示文字，key 用來對應 data 的物件屬性
-  // 不過如果是多層巢狀的就不知道怎麼設計，目前想到的就是把 data 處理成單層物件，對應 headers 裡 key 
+  // 不過如果是多層巢狀的就不知道怎麼設計，目前想到的就是把 data 處理成單層物件，對應 headers 裡 key
   const TableComponent = (props) => {
     const { curPageNo, pageSize, headers, data } = props;
     const startIndex = (curPageNo - 1) * pageSize;
@@ -88,7 +88,14 @@ function Homework1() {
         <thead>
           <tr>
             {headers.map((item) => (
-              <th style={{ fontWeight: 700, padding: "0.5rem" }} key={item.key}>
+              <th
+                style={{
+                  fontWeight: 700,
+                  padding: "0.5rem",
+                  border: "1px solid gray",
+                }}
+                key={item.key}
+              >
                 {item.text}
               </th>
             ))}
@@ -104,7 +111,7 @@ function Homework1() {
         const { content } = props;
 
         return (
-          <td style={{ padding: "0.5rem", fontSize: "0.8rem" }}>{content}</td>
+          <td style={{ padding: "0.5rem", fontSize: "0.8rem", border: "1px solid gray" }}>{content}</td>
         );
       };
 
@@ -112,9 +119,9 @@ function Homework1() {
         <tbody>
           {data.map((item, index) => (
             <tr key={index}>
-                {headers.map((header) => (
-                  <TDComponent key={header.key} content={item[header.key]} />
-                ))}
+              {headers.map((header) => (
+                <TDComponent key={header.key} content={item[header.key]} />
+              ))}
             </tr>
           ))}
         </tbody>
@@ -144,7 +151,7 @@ function Homework1() {
     };
 
     return (
-      <div style={{ margin: "8px" }}>
+      <div className="m-2 text-center">
         {Array.from({ length: totalPages }, (num, i) => {
           const isCurPage = curPageNo === i + 1;
 
@@ -152,6 +159,7 @@ function Homework1() {
             <button
               key={i}
               style={{
+                display: "inline-block",
                 padding: "4px 8px",
                 border: "1px solid black",
                 borderRadius: "8px",
@@ -174,20 +182,20 @@ function Homework1() {
 
   return (
     <>
-      <h2 style={{ padding: "1rem", fontSize: "1.5rem", fontWeight: "bold" }}>
-        使用者資料
-      </h2>
-      <TableComponent
-        headers={headers}
-        curPageNo={curPageNo}
-        pageSize={pageSize}
-        data={userData}
-      />
-      <PaginationComponent
-        curPageNo={curPageNo}
-        pageSize={pageSize}
-        totalRows={totalRows}
-      />
+      <h2 className="mb-4 text-2xl font-bold">使用者資料</h2>
+      <div className="mx-auto w-full">
+        <TableComponent
+          headers={headers}
+          curPageNo={curPageNo}
+          pageSize={pageSize}
+          data={userData}
+        />
+        <PaginationComponent
+          curPageNo={curPageNo}
+          pageSize={pageSize}
+          totalRows={totalRows}
+        />
+      </div>
     </>
   );
 }

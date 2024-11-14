@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 const Homework = () => {
   return (
     <div>
-      <h2 className="mb-4 text-xl font-bold">作業目錄</h2>
+      <h2 className="mb-4 text-xl font-bold">練習目錄</h2>
       <div className="text-start">
         <ul className="space-y-2">
           <li>

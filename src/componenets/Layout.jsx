@@ -196,7 +196,7 @@ const Layout = ({ children }) => {
       {/* 版權資訊 */}
       <div className="bg-gray-800 p-4 md:px-14">
         <div className="mx-auto max-w-md space-y-4 md:flex md:max-w-xl lg:max-w-7xl">
-          <p className="text-sm text-white">© 2021 ReactPrac</p>
+          <p className="text-sm text-white">© 2024 ReactPrac</p>
         </div>
       </div>
     </>
@@ -204,39 +204,3 @@ const Layout = ({ children }) => {
 };
 
 export default Layout;
-
-{
-  /* <Navbar.Container className="border-b-[1px] border-solid border-gray-500">
-        <Navbar.Logo title="ReactPrac" />
-        <Navbar.ItemGroup>
-          <Navbar.Item text="首頁" href="/" />
-          <Navbar.Item text="作業" href="/homework" />
-          <Navbar.Item text="元件" href="/" />
-          {username ?? (<Navbar.Item text="登入" href="/login" />)}
-        </Navbar.ItemGroup>
-      </Navbar.Container> */
-}
-
-/* {!username ? (
-        <button
-          className="ml-2 rounded bg-primary px-2 py-1 text-sm text-white hover:bg-gray-500 hover:transition-all"
-          onClick={navigateToPage("/login")}
-        >
-          登入
-        </button>
-      ) : (
-        <>
-          <button
-            className="ml-2 rounded bg-primary px-2 py-1 text-sm text-white hover:bg-gray-500 hover:transition-all"
-            onClick={navigateToPage("/profile")}
-          >
-            會員頁(需權限)
-          </button>
-          <button
-            className="ml-2 rounded bg-primary px-2 py-1 text-sm text-white hover:bg-gray-500 hover:transition-all"
-            onClick={logOut}
-          >
-            登出
-          </button>
-        </>
-      )} */

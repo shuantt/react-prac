@@ -1,23 +1,42 @@
+import { Link } from "react-router-dom";
+
 const Container = ({ children, className }) => {
-  return <nav className={`flex justify-between py-4 px-4 ${className}`}>{children}</nav>;
+  return <nav className={`${className}`}>{children}</nav>;
 };
 
-const Logo = ({ title, src, alt }) => {
+const Content = ({ children, className }) => {
+  return <div className={`flex justify-between ${className}`}>{children}</div>;
+};
+
+const Logo = ({ title, src, alt, href }) => {
   return (
     <>
-      <div>{src ? <img src={src} alt={alt} /> : <h1 className="font-bold text-lg">{title}</h1>}</div>
+      <div>
+        {src ? (
+          <img src={src} alt={alt} />
+        ) : (
+          <Link to={href} className="text-lg font-bold">
+            {title}
+          </Link>
+        )}
+      </div>
     </>
   );
 };
 
-const ItemGroup = ({ children }) => {
-  return <ul className="flex gap-2">{children}</ul>;
+const ItemGroup = ({ children, className }) => {
+  return <ul className={`${className}`}>{children}</ul>;
 };
 
 const Item = ({ text, href }) => {
   return (
-    <li>
-      <a href={href}>{text}</a>
+    <li className="flex items-center justify-center">
+      <Link
+        to={href}
+        className="hover:text-link block cursor-pointer hover:underline"
+      >
+        {text}
+      </Link>
     </li>
   );
 };
@@ -32,6 +51,7 @@ const LinkIcon = ({ src, alt, onClick }) => {
 
 const Navbar = {
   Container,
+  Content,
   Logo,
   ItemGroup,
   Item,

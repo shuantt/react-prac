@@ -13,6 +13,7 @@ export default {
       black: "#000000",
       white: "#ffffff",
       danger: "#e3342f",
+      link: "#3490dc",
       gray: {
         100: "#f7fafc",
         200: "#edf2f7",

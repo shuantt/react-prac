@@ -14,11 +14,11 @@ const ContextPracttice = () => {
 
   const buttonThemeStyle = {
     light: "bg-white text-black border border-black",
-    dark: "bg-white text-black border border-white",
+    dark: "bg-black text-white border border-white",
   };
 
   return (
-    <div className={`p-8 ${themeStyle[theme]}`}>
+    <div className={`p-8 rounded border-[1px] border-black ${themeStyle[theme]}`}>
       <h1 className={`mb-2 text-lg font-bold`}>
         {language === "zh" ? "useContext 練習" : "useContext Practice"}
       </h1>
@@ -28,22 +28,7 @@ const ContextPracttice = () => {
         <h2>Login Status: {isLogin ? "Logged in" : "Visitor"}</h2>
       )}
       <br />
-      <div className="flex flex-col items-center justify-center space-y-4">
-        {isLogin ? (
-          <button
-            className={`block rounded px-4 py-2 ${buttonThemeStyle[theme]}`}
-            onClick={logout}
-          >
-            {language === "zh" ? "登出" : "Logout"}
-          </button>
-        ) : (
-          <button
-            className={`block rounded px-4 py-2 ${buttonThemeStyle[theme]}`}
-            onClick={() => login(1)}
-          >
-            {language === "zh" ? "登入" : "Login"}
-          </button>
-        )}
+      <div className="flex flex-col space-y-4">
         <button
           className={`block rounded px-4 py-2 ${buttonThemeStyle[theme]}`}
           onClick={() => {

@@ -1,43 +1,56 @@
-import { useEffect } from "react";
-import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../store/authContext";
 
 const DefaultComponent = ({ Component }) => {
-  const [user, setUser] = useState(null);
-  const token = localStorage.getItem("token");
-  console.log(`進入 DefaultComponent token: ${token}, 使用者資料: `, user);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { isLogin, firstName, lastName, userRole } = useAuth();
 
-  useEffect(() => {
-    if (token) {
-      fetch("http://172.104.121.100/auth/profile", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("DefaultComponent API 回傳： ", data);
-          if (data.status == "success") {
-            setUser({ ...data.data });
-          } else {
-            setUser(null);
-          }
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-          setUser(null);
-        });
-    } else {
-      setUser(null);
+  const user = {
+    firstName: firstName,
+    lastName: lastName,
+    userRole: userRole,
+  };
+
+  const privatePages = [
+    {
+      path: "/profile",
+      role: 1,
+    },
+    {
+      path: "/VIP",
+      role: 2,
+    },
+  ];
+
+  const pageRule = privatePages.find((page) => page.path === location.pathname);
+  console.log("pageRule", pageRule);
+  console.log("userRole", userRole);
+
+  if (location === "/login" && userRole > 0) {
+    navigate("/");
+    return;
+  }
+
+  if (pageRule) {
+    // 如果沒有登入，就導回登入頁
+    if (!isLogin) {
+      navigate("/login");
+      return;
     }
-  }, []);
 
-  return (
-    <>
-      <Component {...user} />
-    </>
-  );
+    // 權限不足，導回首頁
+    if (userRole < pageRule.role) {
+      navigate("/");
+      return;
+    }
+
+    // 有設定的頁面，就將 user 資料傳入
+    return <Component {...user} />;
+  } else {
+    // 沒有設定的頁面，就直接顯示
+    return <Component />;
+  }
 };
 
 export default DefaultComponent;

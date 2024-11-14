@@ -1,23 +1,20 @@
 import { useRef, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../store/authContext";
 import TextBox from "../componenets/TextBox";
 import "../assets/css/index.css";
 
 const Login = () => {
+  const { isLogin, login } = useAuth();
+  const navigate = useNavigate();
+  const [isError, setIsError] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
   const refs = useRef({
     usernameRef: null,
     passwordRef: null,
   });
 
-  const [isError, setIsError] = useState(false);
-  const [errMsg, setErrMsg] = useState("");
-
-  const navigate = useNavigate();
-  const navigateToPage = useCallback((path) => () => {
-    navigate(`${path}`);
-  });
-
-  const login = () => {
+  const checkLogin = () => {
     fetch("http://172.104.121.100/auth/login", {
       method: "POST",
       headers: {
@@ -30,9 +27,13 @@ const Login = () => {
     })
       .then((response) => response.json())
       .then((data) => {
+        console.log(data);
         if (data.data) {
-          localStorage.setItem("token", data.data);
-          // navigateToPage("/"); //這個寫法會無法使用
+          localStorage.setItem("token", data.data.token);
+          localStorage.setItem("firtName", data.data.firstName);
+          localStorage.setItem("lastName", data.data.lastName);
+          localStorage.setItem("userRole", data.data.userRole);
+          login(data.data.userRole);
           navigate("/");
         } else {
           setIsError(true);
@@ -81,21 +82,18 @@ const Login = () => {
         )}
         <button
           className="rounded bg-primary px-4 py-2 text-white hover:bg-gray-500 hover:transition-all"
-          onClick={login}
+          onClick={checkLogin}
         >
           送出表單
         </button>
         <div className="border-b-[1px] border-solid border-gray-500"></div>
         <div className="text-start">
-          <div>測試帳號：test02</div>
-          <div>測試密碼：Aa123456</div>
+          <div>測試帳號(role:1): test02</div>
+          <div>測試密碼: Aa123456</div>
+          <div>---</div>
+          <div>測試帳號(role:2): shuan</div>
+          <div>測試密碼: Aa123456</div>
         </div>
-        <button
-          className="rounded bg-gray-600 px-2 py-1 text-sm text-white hover:bg-gray-500 hover:transition-all"
-          onClick={navigateToPage("/profile")}
-        >
-          會員頁(測試用)
-        </button>
       </div>
     </div>
   );

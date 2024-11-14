@@ -99,7 +99,7 @@ function Homework2() {
   };
 
   return (
-    <div className="p-8">
+    <section>
       {/* Input Text Field */}
       <div className="mb-4 flex flex-col items-start space-y-6">
         <h2 className="text-lg font-bold">Input Text Field</h2>
@@ -175,7 +175,7 @@ function Homework2() {
       <div className="my-8 border-b-[1px] border-solid border-gray-300"></div>
 
       {/* 送出按鈕 */}
-      <div className="space-x-4 flex items-start">
+      <div className="flex items-start space-x-4">
         <button
           className="rounded bg-primary px-4 py-2 text-white hover:bg-gray-500"
           onClick={handleSubmit}
@@ -190,7 +190,7 @@ function Homework2() {
         </button>
         <div className="my-8 border-b-[1px] border-solid border-gray-300"></div>
       </div>
-    </div>
+    </section>
   );
 }
 

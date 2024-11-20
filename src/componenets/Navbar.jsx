@@ -28,12 +28,13 @@ const ItemGroup = ({ children, className }) => {
   return <ul className={`${className}`}>{children}</ul>;
 };
 
-const Item = ({ text, href }) => {
+const Item = ({ text, href, onClick }) => {
   return (
     <li className="flex items-center justify-center">
       <Link
         to={href}
-        className="hover:text-link block cursor-pointer hover:underline"
+        className="block cursor-pointer hover:text-link hover:underline"
+        onClick={() => onClick && onClick()}
       >
         {text}
       </Link>
@@ -46,7 +47,9 @@ const LinkIconGroup = ({ children }) => {
 };
 
 const LinkIcon = ({ src, alt, onClick }) => {
-  return <div></div>;
+  return <div>
+    <img src={src} alt={alt} onClick={() => onClick && onClick()} />
+  </div>;
 };
 
 const Navbar = {

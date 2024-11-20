@@ -1,20 +1,56 @@
 import React, { useEffect, useState } from "react";
+import { useReducer } from "react";
 
 const AuthContext = React.createContext();
 
-const AuthProvider = ({ children }) => {
-  const [isLogin, setIsLogin] = useState(false);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [userRole, setUserRole] = useState(0); // 0: visitor, 1: member, 2: vipMember
+const authReducer = (state, action) => {
+  switch (action.type) {
+    case "login":
+      console.log("進入 authReducer login");
+      return {
+        ...state,
+        isLogin: true,
+        firstName: localStorage.getItem("firstName"),
+        lastName: localStorage.getItem("lastName"),
+        userRole: localStorage.getItem("userRole"),
+      };
+    case "logout":
+      console.log("進入 authReducer logout");
+      localStorage.removeItem("token");
+      localStorage.removeItem("firstName");
+      localStorage.removeItem("lastName");
+      localStorage.removeItem("userRole");
+      return {
+        ...state,
+        isLogin: false,
+        firstName: "",
+        lastName: "",
+        userRole: 0,
+      };
+    case "setFirstName":
+      break;
+    case "setLastName":
+      break;
+    case "setUserRole":
+      break;
+    default:
+      throw new Error("reducer action type 錯誤");
+  }
+};
 
-  const [isLoading, setIsLoading] = useState(true); 
+const AuthProvider = ({ children }) => {
+  const [state, dispatch] = useReducer(authReducer, {
+    isLogin: false,
+    firstName: "",
+    lastName: "",
+    userRole: 0,
+  });
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     console.log("進入 AuthProvider token: ", token);
     if (token) {
-      fetch("http://172.104.121.100/auth/profile", {
+      fetch("https://react-prac-api.hnd1.zeabur.app/auth/profile", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -25,54 +61,36 @@ const AuthProvider = ({ children }) => {
         .then((data) => {
           console.log("AuthProvider API 回傳： ", data);
           if (data.status == "success") {
-            setIsLogin(true);
-            setFirstName(data.data.first_name);
-            setLastName(data.data.last_name);
-            setUserRole(data.data.role);
+            dispatch({
+              type: "login",
+              payload: {
+                firstName: data.data.firstName,
+                lastName: data.data.lastNname,
+                userRole: data.data.role,
+              },
+            });
           } else {
-            setIsLogin(false);
-            setFirstName("");
-            setLastName("");
-            setUserRole(0);
+            dispatch({ type: "logout" });
           }
         })
         .catch((error) => {
           console.error("Error:", error);
-          setIsLogin(false);
-          setFirstName("");
-          setLastName("");
-          setUserRole(0);
+          dispatch({ type: "logout" });
         });
     } else {
-      setIsLogin(false);
-      setFirstName("");
-      setLastName("");
-      setUserRole(0);
+      dispatch({ type: "logout" });
     }
-    setIsLoading(false);
   }, []);
 
   return (
     <AuthContext.Provider
       value={{
-        isLogin: isLogin,
-        firstName: firstName,
-        lastName: lastName,
-        userRole: userRole,
-        isLoading: isLoading,
-        login: (role) => {
-          setIsLogin(true);
-          setUserRole(role);
-          setFirstName(firstName);
-          setLastName(lastName);
+        ...state,
+        login: () => {
+          dispatch({ type: "login" });
         },
         logout: () => {
-          setIsLogin(false);
-          setUserRole(0);
-          localStorage.removeItem("token");
-          localStorage.removeItem("firstName");
-          localStorage.removeItem("lastName");
-          localStorage.removeItem("userRole");
+          dispatch({ type: "logout" });
         },
       }}
     >

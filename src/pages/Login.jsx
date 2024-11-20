@@ -15,7 +15,7 @@ const Login = () => {
   });
 
   const checkLogin = () => {
-    fetch("http://172.104.121.100/auth/login", {
+    fetch("https://react-prac-api.hnd1.zeabur.app/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -30,10 +30,10 @@ const Login = () => {
         console.log(data);
         if (data.data) {
           localStorage.setItem("token", data.data.token);
-          localStorage.setItem("firtName", data.data.firstName);
+          localStorage.setItem("firstName", data.data.firstName);
           localStorage.setItem("lastName", data.data.lastName);
           localStorage.setItem("userRole", data.data.userRole);
-          login(data.data.userRole);
+          login();
           navigate("/");
         } else {
           setIsError(true);

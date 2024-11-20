@@ -1,20 +1,23 @@
 import { Link, Outlet, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../store/authContext";
+import { MdOutlineAccountCircle } from "react-icons/md";
+import { MdOutlineLogout } from "react-icons/md";
+import { RxHamburgerMenu } from "react-icons/rx";
 import Navbar from "./Navbar";
+import { IconContext } from "react-icons";
 
 const Layout = ({ children }) => {
-  const { isLogin, isLoading, logout } = useAuth();
-  const [toggleMenu, setToggleMenu] = useState(false);
   const navigator = useNavigate();
+  const token = localStorage.getItem("token");
 
-  // 這個好像沒用...
-  if (isLoading) {
-    console.log("載入中...");
-    return <>
-        <div>載入中...</div>
-    </>;
-  }
+  const { logout } = useAuth();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    console.log(isMenuOpen);
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   return (
     <>
@@ -24,78 +27,96 @@ const Layout = ({ children }) => {
           <Navbar.Logo title="ReactPrac" href="/" />
           <Navbar.ItemGroup className="flex gap-5">
             <Navbar.Item text="練習目錄" href="/homework" />
-            {isLogin ? (
+            {token ? (
               <>
                 <Navbar.Item text="一般會員" href="/profile" />
                 <Navbar.Item text="VIP會員" href="/VIP" />
                 <button
-                  className="ml-2 rounded bg-primary px-2 py-1 text-sm text-white hover:bg-gray-500 hover:transition-all"
+                  className="group relative flex items-center justify-center overflow-hidden rounded border border-black bg-white px-2 py-1 text-black"
                   onClick={() => {
                     logout();
+                    toggleMenu();
                   }}
                 >
-                  登出
+                  <span className="relative z-10 flex items-center gap-1">
+                    <MdOutlineLogout className="text-sm group-hover:text-white" />
+                    <span className="text-sm group-hover:text-white">登出</span>
+                  </span>
+                  <span className="absolute inset-0 -translate-x-full transform bg-black transition-transform group-hover:translate-x-0"></span>
                 </button>
               </>
             ) : (
               <button
-                className="ml-2 rounded bg-primary px-2 py-1 text-sm text-white hover:bg-gray-500 hover:transition-all"
+                className="group relative flex items-center justify-center overflow-hidden rounded border border-black bg-white px-2 py-1 text-black"
                 onClick={() => {
+                  toggleMenu();
                   navigator("/login");
                 }}
               >
-                登入
+                <span className="relative z-10 flex items-center gap-1">
+                  <MdOutlineAccountCircle className="text-sm group-hover:text-white" />
+                  <span className="text-sm group-hover:text-white">登入</span>
+                </span>
+                <span className="absolute inset-0 -translate-x-full transform bg-black transition-transform group-hover:translate-x-0"></span>
               </button>
             )}
           </Navbar.ItemGroup>
         </Navbar.Content>
 
-        <Navbar.Content className="md:hidden relative mx-auto flex max-w-md items-center justify-center">
+        <Navbar.Content className="relative mx-auto flex max-w-md items-center justify-center md:hidden">
           <Navbar.Logo title="ReactPrac" href="/" />
           {/* 手機板 */}
           <div>
             <button
-              className="rounded border-[1px] border-solid border-gray-500 px-1 text-gray-500 hover:cursor-pointer hover:border-gray-400 hover:text-[15px] hover:transition hover:duration-100 hover:ease-linear"
-              onClick={() => {
-                setToggleMenu(!toggleMenu);
-              }}
+              className="rounded border-[1px] border-solid border-gray-500 p-1 text-gray-500 hover:cursor-pointer hover:border-gray-400 hover:text-gray-400 hover:transition hover:duration-100"
+              onClick={toggleMenu}
             >
-              三
+              <RxHamburgerMenu />
             </button>
           </div>
         </Navbar.Content>
       </Navbar.Container>
 
+      {/* 手機板表單 */}
       <Navbar.ItemGroup
-        className={`absolute w-full transform flex-col items-center justify-center gap-2 bg-white p-4 shadow-md transition-all duration-300 ease-in-out ${
-          toggleMenu
+        className={`absolute w-full transform flex-col items-center justify-center gap-2 bg-white p-4 shadow-md transition-all duration-300 ease-in-out md:hidden ${
+          isMenuOpen
             ? "flex scale-100 opacity-100"
             : "hidden scale-95 opacity-0"
         }`}
       >
-        <Navbar.Item text="練習目錄" href="/homework" />
-        {isLogin ? (
+        <Navbar.Item text="練習目錄" href="/homework" onClick={toggleMenu} />
+        {token ? (
           <>
-            <Navbar.Item text="一般會員" href="/profile" />
-            <Navbar.Item text="VIP會員" href="/VIP" />
+            <Navbar.Item text="一般會員" href="/profile" onClick={toggleMenu} />
+            <Navbar.Item text="VIP會員" href="/VIP" onClick={toggleMenu} />
             <button
-              className="ml-2 block w-fit rounded bg-primary px-2 py-1 text-sm text-white hover:bg-gray-500 hover:transition-all"
+              className="group relative flex items-center justify-center overflow-hidden rounded border border-black bg-white px-2 py-1 text-black"
               onClick={() => {
                 logout();
+                toggleMenu();
               }}
             >
-              登出
+              <span className="relative z-10 flex items-center gap-1">
+                <MdOutlineLogout className="text-sm group-hover:text-white" />
+                <span className="text-sm group-hover:text-white">登出</span>
+              </span>
+              <span className="absolute inset-0 -translate-x-full transform bg-black transition-transform group-hover:translate-x-0"></span>
             </button>
           </>
         ) : (
           <button
-            className="block rounded bg-primary px-2 py-1 text-sm text-white hover:bg-gray-500 hover:transition-all"
+            className="group relative flex items-center justify-center overflow-hidden rounded border border-black bg-white px-2 py-1 text-black"
             onClick={() => {
-              setToggleMenu(false);
+              toggleMenu();
               navigator("/login");
             }}
           >
-            登入
+            <span className="relative z-10 flex items-center gap-1">
+              <MdOutlineAccountCircle className="text-sm group-hover:text-white" />
+              <span className="text-sm group-hover:text-white">登入</span>
+            </span>
+            <span className="absolute inset-0 -translate-x-full transform bg-black transition-transform group-hover:translate-x-0"></span>
           </button>
         )}
       </Navbar.ItemGroup>
@@ -123,19 +144,19 @@ const Layout = ({ children }) => {
               <div className="flex flex-col text-sm">
                 <Link
                   to="/homework"
-                  className="hover:text-link block cursor-pointer hover:underline"
+                  className="block cursor-pointer hover:text-link hover:underline"
                 >
                   練習目錄
                 </Link>
                 <Link
                   to="/login"
-                  className="hover:text-link block cursor-pointer hover:underline"
+                  className="block cursor-pointer hover:text-link hover:underline"
                 >
                   登入頁
                 </Link>
                 <Link
                   to="/profile"
-                  className="hover:text-link block cursor-pointer hover:underline"
+                  className="block cursor-pointer hover:text-link hover:underline"
                 >
                   會員頁
                 </Link>
@@ -147,19 +168,19 @@ const Layout = ({ children }) => {
               <div className="flex flex-col text-sm">
                 <Link
                   to="/homework"
-                  className="hover:text-link block cursor-pointer hover:underline"
+                  className="block cursor-pointer hover:text-link hover:underline"
                 >
                   練習目錄
                 </Link>
                 <Link
                   to="/login"
-                  className="hover:text-link block cursor-pointer hover:underline"
+                  className="block cursor-pointer hover:text-link hover:underline"
                 >
                   登入頁
                 </Link>
                 <Link
                   to="/profile"
-                  className="hover:text-link block cursor-pointer hover:underline"
+                  className="block cursor-pointer hover:text-link hover:underline"
                 >
                   會員頁
                 </Link>
@@ -171,19 +192,19 @@ const Layout = ({ children }) => {
               <div className="flex flex-col text-sm">
                 <Link
                   to="/homework"
-                  className="hover:text-link block cursor-pointer hover:underline"
+                  className="block cursor-pointer hover:text-link hover:underline"
                 >
                   練習目錄
                 </Link>
                 <Link
                   to="/login"
-                  className="hover:text-link block cursor-pointer hover:underline"
+                  className="block cursor-pointer hover:text-link hover:underline"
                 >
                   登入頁
                 </Link>
                 <Link
                   to="/profile"
-                  className="hover:text-link block cursor-pointer hover:underline"
+                  className="block cursor-pointer hover:text-link hover:underline"
                 >
                   會員頁
                 </Link>

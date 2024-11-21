@@ -1,6 +1,11 @@
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { LanguageProvider } from "./store/languageContext";
+import { AuthProvider } from "./store/authContext";
+import { ThemeProvider } from "./store/themeContext";
 import Layout from "./componenets/Layout.jsx";
+import ErrorPage from "./pages/404.jsx";
+import DefaultComponent from "./componenets/DefaultComponent.jsx";
 import App from "./App.jsx";
 import Homework from "./pages/Homework.jsx";
 import Homework1 from "./pages/Homework1.jsx";
@@ -8,12 +13,8 @@ import Homework2 from "./pages/Homework2.jsx";
 import Login from "./pages/Login.jsx";
 import Profile from "./pages/Profile.jsx";
 import VIP from "./pages/VIP.jsx";
-import ContextPracttice from "./pages/ContextPractice.jsx";
-import DefaultComponent from "./componenets/DefaultComponent.jsx";
-import { LanguageProvider } from "./store/languageContext";
-import { AuthProvider } from "./store/authContext";
-import { ThemeProvider } from "./store/themeContext";
-import ErrorPage from "./pages/404.jsx";
+import ContextPractice from "./pages/ContextPractice.jsx";
+import ReactQuery from "./pages/ReactQuery.jsx";
 import "./assets/css/index.css";
 
 const router = createBrowserRouter([
@@ -52,8 +53,12 @@ const router = createBrowserRouter([
       },
       {
         path: "/ContextPractice",
-        element: <ContextPracttice />,
+        element: <ContextPractice />,
       },
+      {
+        path: "/ReactQuery",
+        element: <ReactQuery />
+      }
     ],
   },
   {

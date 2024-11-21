@@ -25,6 +25,12 @@ const Homework = () => {
               useContext練習
             </Link>
           </li>
+          <li>
+            作業5:
+            <Link to="/reactquery" className="text-link underline">
+              react-query 練習
+            </Link>
+          </li>
         </ul>
       </div>
     </div>
